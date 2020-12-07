@@ -4,3 +4,10 @@ venv
 .npz
 *.pt
 !Dockerfile.pt
+data_collection/dataset
+.idea
+*__pycache__
+model/weights
+model/trained_models
+data_collection/dataset_test
+clone.sh

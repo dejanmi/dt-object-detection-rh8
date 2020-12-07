@@ -1,6 +1,7 @@
 import torch
 from torchvision.transforms.functional import to_tensor
-
+import torchvision
+from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 
 class Wrapper:
     def __init__(self):
@@ -8,8 +9,13 @@ class Wrapper:
         # TODO Don't forget to set your model in evaluation/testing/production mode, and sending it to the GPU (if you have one)
 
         self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-        self.model = Model()
-        self.model.load_state_dict(torch.load("weights/model.pt", map_location=self.device))
+        #self.model = Model()
+        self.model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=True)
+        num_classes = 5
+        in_features = self.model.roi_heads.box_predictor.cls_score.in_features
+        self.model.roi_heads.box_predictor = FastRCNNPredictor(in_features, num_classes)
+        checkpoint = torch.load("weights/model.pt", map_location=self.device)
+        self.model.load_state_dict(checkpoint)
         self.model.to(self.device)
         self.model.eval()
 
